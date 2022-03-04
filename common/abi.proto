@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package abi;
+
+// 客户端请求，基本为事件（键盘事件，鼠标事件）
+message Operation {
+    oneof event {
+        Resize resize = 1;
+    }
+}
+
+message Resize {
+    uint32 width = 1;
+    uint32 height = 2;
+}
+
+// 服务端传输图片流
+message Image {
+    uint32 width = 1;
+    uint32 height = 2;
+
+    enum Mode {
+        RGB = 0;
+        RGBA = 1;
+    }
+    Mode mode = 3;
+    bytes data = 4;
+}
