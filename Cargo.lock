@@ -105,7 +105,6 @@ dependencies = [
  "bytes",
  "common",
  "fltk",
- "image",
  "tokio",
 ]
 

@@ -3,7 +3,7 @@ use prost::Message;
 use tokio::io::{AsyncRead, AsyncReadExt};
 
 use crate::{AppError, Operation, Image};
-use zstd::{encode_all, DEFAULT_COMPRESSION_LEVEL, decode_all};
+use zstd::{encode_all, decode_all};
 
 // 用多少个字节表示数据长度，这里是4个字节
 // 也就是数据最大可以到 2 ** 32 = 4GB
@@ -18,7 +18,7 @@ where
         let mut buf1 = Vec::with_capacity(size);
         self.encode(&mut buf1)?;
 
-        let encoded_buf = encode_all(&buf1[..], DEFAULT_COMPRESSION_LEVEL)?;
+        let encoded_buf = encode_all(&buf1[..], 10)?;
 
         buf.put_u32(encoded_buf.len() as u32);
         buf.extend(encoded_buf);
@@ -57,6 +57,8 @@ mod tests {
     use super::*;
     use bytes::Bytes;
     use image::io::Reader as ImageReader;
+    use crate::image::Type::{Nomal};
+    use crate::image::Mode::{Rgba};
 
     #[test]
     fn event_encode_decode_should_work() {
@@ -75,13 +77,13 @@ mod tests {
         let height = img.height();
         let mut data = BytesMut::new();
         data.extend_from_slice(img.as_bytes());
-        let image_proto = Image::new(width as usize, height as usize, Bytes::from(data));
+        let image_proto = Image::new(width as usize, height as usize,Nomal.into(), Rgba.into(), Bytes::from(data));
 
         let mut buf = BytesMut::new();
         image_proto.encode_frame(&mut buf).unwrap();
-
-
         let image_proto1 = Image::decode_frame(&mut buf).unwrap();
         assert_eq!(image_proto, image_proto1);
     }
+
+    // TODO: 测试read_frame
 }

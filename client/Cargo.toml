@@ -9,6 +9,5 @@ edition = "2021"
 tokio = { version = "1", features = ["full"] } 
 common = { path = "../common" }
 bytes = "1"
-image = "0.24"
-# fltk = {version = "^1.2", features = ["fltk-bundled"] }
-fltk = {version = "^1.2"}
+fltk = {version = "^1.2", features = ["fltk-bundled"] }
+# fltk = {version = "^1.2"}

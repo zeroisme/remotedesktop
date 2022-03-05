@@ -14,11 +14,12 @@ impl Operation {
 }
 
 impl Image {
-    pub fn new(width: usize, height: usize, data: Bytes) -> Self {
+    pub fn new(width: usize, height: usize, typ: Type, mode: Mode, data: Bytes) -> Self {
         Self {
             width: width as u32,
             height: height as u32,
-            mode: Mode::Rgba.into(),
+            typ: typ.into(),
+            mode: mode.into(),
             data: data,
         }
     }

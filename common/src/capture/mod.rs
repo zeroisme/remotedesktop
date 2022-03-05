@@ -3,7 +3,6 @@ use scrap::{Capturer, Display};
 use std::io::ErrorKind::WouldBlock;
 use std::thread;
 use std::time::Duration;
-
 unsafe impl Send for Cap {}
 
 pub struct Cap {
@@ -18,6 +17,7 @@ impl Cap {
         let capturer = Capturer::new(display).unwrap();
         let w = capturer.width();
         let h = capturer.height();
+        println!("w: {}, h: {}", w, h);
         Self { w: w, h: h, capturer: capturer }
     }
 
@@ -47,18 +47,16 @@ impl Cap {
                     }
                 }
             };
-            // BGRA to RGBA
+            // BGRA to RGB
             let mut n = 0;
             while n < buffer.len() {
                 buf.extend_from_slice(&[
                     buffer[n + 2],
                     buffer[n + 1],
                     buffer[n],
-                    // buffer[n+3],
                 ]);
                 n += 4;
             }
-            // buf.extend_from_slice(&buffer);
             break;
         }
     }
@@ -80,15 +78,13 @@ mod tests {
 
         let mut imgbuf = image::ImageBuffer::new(w as u32, h as u32);
         for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
-            let stride = (y as u32 * w as u32 + x) * 4;
+            let stride = (y as u32 * w as u32 + x) * 3;
             let r: u8 = buf[(stride) as usize];
             let g: u8 = buf[(stride + 1) as usize];
             let b: u8 = buf[(stride + 2) as usize];
-            let a: u8 = buf[(stride + 3) as usize];
-            *pixel = image::Rgba([r, g, b, a]);
+            *pixel = image::Rgb([r, g, b]);
         }
         imgbuf.save("test.png").unwrap();
-        
     }
     
 }

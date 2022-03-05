@@ -19,10 +19,18 @@ message Image {
     uint32 width = 1;
     uint32 height = 2;
 
+    enum Type {
+        // 正常图片
+        NOMAL = 0;
+        // 与前一个capture的图片异或的图片
+        EXCLUSIVE = 1;
+    }
+    Type typ = 3;
+
     enum Mode {
         RGB = 0;
         RGBA = 1;
     }
-    Mode mode = 3;
-    bytes data = 4;
+    Mode mode = 4;
+    bytes data = 5;
 }

@@ -26,13 +26,23 @@ pub struct Image {
     pub width: u32,
     #[prost(uint32, tag="2")]
     pub height: u32,
-    #[prost(enumeration="image::Mode", tag="3")]
+    #[prost(enumeration="image::Type", tag="3")]
+    pub typ: i32,
+    #[prost(enumeration="image::Mode", tag="4")]
     pub mode: i32,
-    #[prost(bytes="bytes", tag="4")]
+    #[prost(bytes="bytes", tag="5")]
     pub data: ::prost::bytes::Bytes,
 }
 /// Nested message and enum types in `Image`.
 pub mod image {
+    #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+    #[repr(i32)]
+    pub enum Type {
+        /// 正常图片
+        Nomal = 0,
+        /// 与前一个capture的图片异或的图片
+        Exclusive = 1,
+    }
     #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
     #[repr(i32)]
     pub enum Mode {
