@@ -7,6 +7,6 @@ pub enum AppError {
     ProstEncodeError(#[from] prost::EncodeError),
     #[error("prost decode error")]
     ProstDecodeError(#[from] prost::DecodeError),
-    #[error("I/O error")]
+    #[error("I/O error: {0}")]
     IoError(#[from] std::io::Error),
 }

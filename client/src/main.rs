@@ -1,13 +1,24 @@
 use bytes::BytesMut;
 use common::{ProstClientStream, Image, image::Type, image_exclusive};
 use tokio::net::TcpStream;
-use fltk::{app, prelude::*, window::Window, frame::Frame, image as fltk_image};
+use fltk::{app, prelude::*, window::Window, frame::Frame, image as fltk_image, enums::Event};
 
 fn main() {
     let app = app::App::default().with_scheme(app::Scheme::Gleam);
-    let mut wind = Window::default().with_size(1920, 1080);
+    let mut wind = Window::default().with_size(800, 600);
     let mut frame = Frame::default().size_of(&wind);
     let (tx, rx) = app::channel::<Image>();
+    frame.handle({
+        move |f, ev| {
+            match ev {
+                Event::KeyDown => {
+                    println!("key down!");
+                }
+                _ => {}
+            }
+            true
+        }
+    });
     // 异步获取图片流，通过channel发送给fltk
     std::thread::spawn(|| {
         let runtime = tokio::runtime::Builder::new_multi_thread()

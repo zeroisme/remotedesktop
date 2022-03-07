@@ -32,7 +32,7 @@ impl Cap {
     pub fn capture(&mut self, buf: &mut BytesMut) {
         let one_second = Duration::new(1, 0);
         // TODO: 让帧率可以配置
-        let one_frame = one_second / 60;
+        let one_frame = one_second / 20;
         loop {
             let frame = self.capturer.frame();
             let buffer = match frame {
@@ -51,9 +51,9 @@ impl Cap {
             let mut n = 0;
             while n < buffer.len() {
                 buf.extend_from_slice(&[
-                    buffer[n + 2],
-                    buffer[n + 1],
-                    buffer[n],
+                    buffer[n + 2] & 0b1111_1000,
+                    buffer[n + 1] & 0b1111_1000,
+                    buffer[n] & 0b1111_1000,
                 ]);
                 n += 4;
             }

@@ -1,6 +1,6 @@
 use std::io::Result;
 use tokio::net::{TcpListener, TcpStream};
-use common::{Image, ProstServerStream, Cap, image_exclusive, image::{Type, Mode}};
+use common::{Image, ProstServerStream, Cap, image_exclusive, image::{Type, Mode}, AppError};
 
 use bytes::BytesMut;
 
@@ -29,7 +29,7 @@ async fn handle_client(socket: TcpStream) {
         let mut typ = Type::Nomal;
         if let Some(ref prev) = prev_img {
             let capture_img = capture_img.freeze();
-            if prev == &capture_img {
+            if *prev == capture_img {
                 continue;
             }
             image_exclusive(prev, &capture_img, &mut img);
@@ -41,6 +41,21 @@ async fn handle_client(socket: TcpStream) {
 
         let pb_image = Image::new(cap.width(), cap.height(), 
             typ, mode, img.freeze());
-        stream.send(pb_image).await.unwrap();
+        match stream.send(pb_image).await {
+            Err(e) => {
+                match e {
+                    AppError::IoError(e) => {
+                        if e.kind() == std::io::ErrorKind::BrokenPipe {
+                            println!("客户端断开连接");
+                        }
+                    }
+                    _ => {
+                        println!("Error: {}", e);
+                    }
+                }
+                break;
+            }
+            Ok(_) => {}
+        }
     }
 }
